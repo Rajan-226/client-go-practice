@@ -2,7 +2,10 @@ module client-go-practice
 
 go 1.22.3
 
-require k8s.io/client-go v0.30.0
+require (
+	k8s.io/apimachinery v0.30.0
+	k8s.io/client-go v0.30.0
+)
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -36,7 +39,6 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	k8s.io/api v0.30.0 // indirect
-	k8s.io/apimachinery v0.30.0 // indirect
 	k8s.io/klog/v2 v2.120.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20240228011516-70dd3763d340 // indirect
 	k8s.io/utils v0.0.0-20230726121419-3b25d923346b // indirect

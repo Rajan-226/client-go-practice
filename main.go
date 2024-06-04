@@ -1,17 +1,20 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 
+	"client-go-practice/utils"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
 )
 
 func main() {
-	_ = setupClient()
+	ctx := context.Background()
+	clientSet := setupClient()
 
-	
+	utils.PrintPods(ctx, clientSet)
 }
 
 func setupClient() *kubernetes.Clientset {
@@ -20,17 +23,13 @@ func setupClient() *kubernetes.Clientset {
 
 	cfg, err := clientcmd.BuildConfigFromFlags("", *kubeConfig)
 	if err != nil {
-		throwError(err, "building config from flag")
+		fmt.Println(err, " while building config from flag")
 	}
 
 	clientSet, err := kubernetes.NewForConfig(cfg)
 	if err != nil {
-		throwError(err, "creating the client from config")
+		fmt.Println(err, " while creating the client from config")
 	}
 
 	return clientSet
-}
-
-func throwError(err error, when string) {
-	fmt.Println(err.Error() + " while " + when)
 }
