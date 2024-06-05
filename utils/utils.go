@@ -9,11 +9,11 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
-func PrintPods(ctx context.Context, clientSet *kubernetes.Clientset) {
+func PrintPods(ctx context.Context, clientSet *kubernetes.Clientset) error {
 	pods, err := clientSet.CoreV1().Pods("ns-one").List(ctx, metav1.ListOptions{})
 
 	if err != nil {
-		fmt.Println(err.Error(), " while getting the pods from clientset")
+		return fmt.Errorf(err.Error(), " while getting the pods from clientset")
 	}
 
 	for index, pod := range pods.Items {
@@ -21,13 +21,14 @@ func PrintPods(ctx context.Context, clientSet *kubernetes.Clientset) {
 	}
 
 	fmt.Println("Successfully Printed all pods!!")
+	return nil
 }
 
-func EditDeploymentImageTag(ctx context.Context, clientSet *kubernetes.Clientset, deploymentName string, tag string) {
+func EditDeploymentImageTag(ctx context.Context, clientSet *kubernetes.Clientset, deploymentName string, tag string) error {
 	deployment, err := clientSet.AppsV1().Deployments("ns-one").Get(ctx, deploymentName, metav1.GetOptions{})
 
 	if err != nil {
-		fmt.Println(err.Error(), " while getting the pods from clientset")
+		return fmt.Errorf(err.Error() + " while getting the pods from clientset")
 	}
 
 	containers := deployment.Spec.Template.Spec.Containers
@@ -37,10 +38,11 @@ func EditDeploymentImageTag(ctx context.Context, clientSet *kubernetes.Clientset
 
 	_, err = clientSet.AppsV1().Deployments("ns-one").Update(ctx, deployment, metav1.UpdateOptions{})
 	if err != nil {
-		fmt.Println(err.Error() + " while updating the image tag of deployment")
+		return fmt.Errorf(err.Error() + " while updating the image tag of deployment")
 	}
 
 	fmt.Printf("Successfully Changed Image of %s deployment to %s!!\n", deploymentName, tag)
+	return nil
 }
 
 func updateImageTag(image string, newTag string) string {
