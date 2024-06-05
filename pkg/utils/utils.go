@@ -6,7 +6,9 @@ import (
 	"strings"
 
 	"github.com/Rajan-226/client-go-practice/pkg/clients/kubernetes"
+	// corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	// "k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 )
 
@@ -54,7 +56,7 @@ func ListResources(ctx context.Context, namespaceName string, resourceName strin
 	client := kubernetes.DyanmicClient()
 
 	gvr, err := findGVR(ctx, resourceName)
-	if err!=nil{
+	if err != nil {
 		return fmt.Errorf(err.Error() + " while finding GVR from resource name using discovery client")
 	}
 
@@ -66,9 +68,16 @@ func ListResources(ctx context.Context, namespaceName string, resourceName strin
 
 	for index, resource := range resources.Items {
 		fmt.Printf("%s %d : %+v\n", resource.GetKind(), index, resource.GetName())
-
 	}
-	
+
+	// To convert unstructured type to a concrete type
+	// podSpec := &corev1.PodTemplate{}
+	// runtime.DefaultUnstructuredConverter.FromUnstructured(resources.Items[0].UnstructuredContent(), podSpec)
+	// if err != nil {
+	// 	return fmt.Errorf(err.Error() + " while converting unstructured resource to PodTemplate")
+	// }
+	// fmt.Println(podSpec.Name, podSpec.CreationTimestamp, podSpec.Kind)
+
 	fmt.Printf("Successfully Printed all resources!!\n\n")
 
 	return nil
