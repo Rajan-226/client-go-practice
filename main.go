@@ -14,7 +14,8 @@ func main() {
 	ctx := context.Background()
 	clientSet := setupClient()
 
-	utils.PrintPods(ctx, clientSet)
+	// utils.PrintPods(ctx, clientSet)
+	utils.EditDeploymentImageTag(ctx, clientSet, "nginx", "1.21.6")
 }
 
 func setupClient() *kubernetes.Clientset {
