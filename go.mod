@@ -1,4 +1,4 @@
-module client-go-practice
+module github.com/Rajan-226/client-go-practice
 
 go 1.22.3
 
