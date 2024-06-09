@@ -2,9 +2,11 @@ package kubernetes
 
 import (
 	"fmt"
+	"time"
 
 	"k8s.io/client-go/discovery"
 	"k8s.io/client-go/dynamic"
+	"k8s.io/client-go/informers"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
@@ -14,6 +16,8 @@ var (
 	typedClient     *kubernetes.Clientset
 	dynamicClient   *dynamic.DynamicClient
 	discoveryClient *discovery.DiscoveryClient
+
+	sharedInformerFactory informers.SharedInformerFactory
 )
 
 func Init() error {
@@ -22,13 +26,22 @@ func Init() error {
 		return err
 	}
 
+	if err = initClients(cfg); err != nil {
+		return err
+	}
+
+	sharedInformerFactory = informers.NewSharedInformerFactory(typedClient, time.Second*30)
+
+	return nil
+}
+
+func initClients(cfg *rest.Config) (err error) {
 	typedClient, err = kubernetes.NewForConfig(cfg)
 	if err != nil {
 		return fmt.Errorf(err.Error() + " while creating the client from config")
 	}
 
-	dynamicClient, err = dynamic.NewForConfig(cfg)
-	if err != nil {
+	if dynamicClient, err = dynamic.NewForConfig(cfg); err != nil {
 		return fmt.Errorf(err.Error() + " while creating the dynamic client from config")
 	}
 
@@ -56,12 +69,20 @@ func DyanmicClient() *dynamic.DynamicClient {
 	return dynamicClient
 }
 
-func DiscoveryClient() *discovery.DiscoveryClient{
-	if discoveryClient == nil{
+func DiscoveryClient() *discovery.DiscoveryClient {
+	if discoveryClient == nil {
 		panic("nil discovery client")
 	}
-	
+
 	return discoveryClient
+}
+
+func SharedInformerFactory() informers.SharedInformerFactory{
+	if sharedInformerFactory == nil {
+		panic("nil shared informer factory")
+	}
+
+	return sharedInformerFactory
 }
 
 func getKubeConfig() (*rest.Config, error) {
