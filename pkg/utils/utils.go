@@ -3,9 +3,11 @@ package utils
 import (
 	"context"
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/Rajan-226/client-go-practice/pkg/clients/kubernetes"
+	"github.com/Rajan-226/client-go-practice/pkg/controllers/deployments"
 	// corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	// "k8s.io/apimachinery/pkg/runtime"
@@ -81,6 +83,21 @@ func ListResources(ctx context.Context, namespaceName string, resourceName strin
 	fmt.Printf("Successfully Printed all resources!!\n\n")
 
 	return nil
+}
+
+func DeploymentController(ctx context.Context) (err error, stopCh chan struct{}) {
+	ctrl, err := deployments.NewController(ctx)
+	if err != nil {
+		return err, nil
+	}
+
+	stopCh = make(chan struct{})
+
+	if err = ctrl.Run(stopCh); err != nil {
+		log.Fatal(err)
+	}
+
+	return nil, stopCh
 }
 
 func updateImageTag(image string, newTag string) string {
